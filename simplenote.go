@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/fatih/color"
 	"io"
 	"io/ioutil"
 	"log"
@@ -15,6 +14,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/fatih/color"
 )
 
 const (
@@ -350,7 +351,9 @@ func (s *simpleNoteClient) getAllNotes(notes Notes, mark string) (Notes, error) 
 		return []Note{}, err
 
 	} else if code != http.StatusOK {
-		return []Note{}, errors.New(fmt.Sprintf("Simplenote request failed. Code was: %s", code))
+		log.Printf("Simplenote request failed to %s%s", baseUrl, indexEndpoint)
+		log.Printf("Simplenote request failed with response: %s", resp)
+		return []Note{}, errors.New(fmt.Sprintf("Simplenote request failed. Code was: %d", code))
 	}
 	l := NoteList{}
 	if err = json.Unmarshal(resp, &l); err != nil {
@@ -435,10 +438,10 @@ func (s *simpleNoteClient) makeRequest(addr, method string, body io.Reader, addi
 		req.Header.Set(headerName, headerVal)
 	}
 	resp, err := s.Client.Do(req)
-	defer resp.Body.Close()
 	if err != nil {
 		return
 	}
+	defer resp.Body.Close()
 	if resp.StatusCode == http.StatusForbidden || resp.StatusCode == http.StatusUnauthorized {
 		if err = s.Authorize(); err != nil {
 			return

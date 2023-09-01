@@ -68,7 +68,7 @@ func (c *commandLineParser) Grab() (params *CommandLineParams, err error) {
 	return c.Params, err
 }
 
-//Get flags retrieves all flags passed by the user.
+// Get flags retrieves all flags passed by the user.
 func (c *commandLineParser) getFlags(args []string) []string {
 	var flagListItemCount int
 	var flagListShowDeleted, flagDeletePermanently bool
